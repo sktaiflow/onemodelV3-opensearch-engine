@@ -167,8 +167,8 @@ def vector_get_base_query(
     }
     return base_query_dsl
 
-def hybrid_get_base_query(
-        
+def hybrid_get_base_query(  
+        vector:List = [],
         source: List = [], 
         must_query: List = [], 
         should_query: List = [], 
@@ -185,40 +185,34 @@ def hybrid_get_base_query(
     base_query_dsl = {
         "_source": source,
         "size": size,
-        "query": {
-            "bool": {
-                "must": [{
-                    "bool": {
-                        "should": must_query,
-                        "minimum_should_match": 1
-                    }
-                }],
-                "should": should_query,
-                "filter": [{
-                    "bool": {
-                        "must_not": must_not_filter,
-                        "must": must_filter
-                    }
-                }]
-            }
-        },
+        "script_score": {
+            "query": {
+                "bool": {
+                    "must": [{
+                        "bool": {
+                            "should": must_query,
+                            "minimum_should_match": 1
+                        }
+                    }],
+                    "should": should_query,
+                    "filter": [{
+                        "bool": {
+                            "must_not": must_not_filter,
+                            "must": must_filter
+                        }
+                    }]
+                }
+            },
+        "script": {
+            "source": "knn_score",
+               "lang": "knn",
+               "params": {
+                    "field": "user_embedding",
+                    "query_value": vector,
+                    "space_type": "cosinesimil"
+                }
+            },
         "sort": ["_score"],
+        }
     }
-
-    # Check if function_score_query and functions are provided
-    if function_score_query or functions:
-        function_score_part = {
-            "query": base_query_dsl["query"],
-            "functions": functions,
-            **function_score_query
-        }
-        
-        # If script score is provided, add it to the function score part
-        if "script_score" in function_score_query:
-            function_score_part["script_score"] = function_score_query["script_score"]
-        
-        base_query_dsl["query"] = {
-            "function_score": function_score_part
-        }
-
     return base_query_dsl
