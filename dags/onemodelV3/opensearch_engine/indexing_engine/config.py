@@ -10,7 +10,9 @@ mappings = {
             "adot_profiles": {"type": "text", "analyzer": "standard", "search_analyzer": "standard"},
             "behavior_profiles": {"type": "text", "analyzer": "standard", "search_analyzer": "standard"},
             "created_at": {"type": "date", "format": "yyyy-MM-dd HH:mm:ss"},
+            "is_active": {"type": "boolean"},
             "is_adot": {"type": "boolean"},
+            "model_version": {"type": "keyword"},
             "user_embedding": {
                 "type": "knn_vector",
                 "dimension": 2048,

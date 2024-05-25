@@ -25,12 +25,13 @@ class IndexingSchema(BaseModel):
     luna_id: str
     age: Optional[int] = Field(None, gt=0)
     gender:GenderEnum = Field(..., description="Gender of the person")
-    user_embedding:List[float]
     mno_profile: str
     adot_profile: str
     behavior_profile: str
     is_active: bool
     is_adot: bool
     model_version:str
+    created_at: str
+    user_embedding:List[float]
     class Config:
         extra = 'forbid'
