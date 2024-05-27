@@ -2,7 +2,7 @@ from time import time
 import logging
 from opensearchpy import helpers, OpenSearch
 from datetime import datetime
-from my_logging import logger
+from dags.onemodelV3.common.my_logging import logger
 from opensearch_schema import ClientSetting
 import traceback
 
@@ -66,3 +66,18 @@ def indexing_data(client, generator):
 
 def update_data(opensearch, generator):
     pass
+
+def analyze_query(client, index_name, query, analyzer:str=None):
+    if analyzer is None:
+        analyzer = 'standard'
+    
+    body =  {
+        "analyzer": analyzer,
+        "text": query
+    }
+
+    response = client.indices.analyze(
+        index=index_name,
+        body=body
+    )
+    return response
