@@ -247,8 +247,6 @@ def hybrid_exact_get_base_query(
         should_query: List = [], 
         filter_query: Dict = {},
         W: Dict = {}, 
-        function_score_query: Dict = {}, 
-        functions: List = [],
         is_debug:bool=False
         ):
     
