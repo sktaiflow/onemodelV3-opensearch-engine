@@ -1,7 +1,4 @@
-def analyze_query(client, index_name, query, analyzer:str=None):
-    if analyzer is None:
-        analyzer = 'standard'
-    
+def analyze_query(client, index_name, query, analyzer:str='standard'):    
     body =  {
         "analyzer": analyzer,
         "text": query
