@@ -3,24 +3,15 @@ import logging
 from opensearchpy import helpers, OpenSearch
 from datetime import datetime
 from dags.onemodelV3.logging import loguru_logger
+from loguru import Logger
+
 from opensearch_schema import ClientSetting
 import traceback
-from loguru import Logger
 from opensearch_schema import IndexingSchema
 from pydantic import BaseModel, ValidationError
 from error_code import InternalCodes
 from functools import wraps
 from typing import Callable, Any, Dict, Optional
-
-
-def doc_validation_check(doc_body):
-    try:
-        IndexingSchema(**doc_body)
-        code = InternalCodes.SUCCESS
-    except ValidationError as e:
-        code = InternalCodes.PYDANTIC_VALIDATION_ERROR
-    finally:
-        return code
 
 def handle_operation(error_code: InternalCodes):
     def decorator(func: Callable):
@@ -47,13 +38,6 @@ def delete_documents(client, index_name, doc_id, logger):
 
 @handle_operation(InternalCodes.UPDATE_DOCUMENT_ERROR)
 def update_documents(client, index_name, doc_id, doc_body, logger):
-    code = doc_validation_check(doc_body=doc_body)
-    message = InternalCodes.get_message(code=code)
-
-    if code != InternalCodes.SUCCESS:
-        logger.error(message)
-        return {"response": None, "code": code, "message": message}
-
     update_body = {
         "doc": doc_body,
         "doc_as_upsert": True
