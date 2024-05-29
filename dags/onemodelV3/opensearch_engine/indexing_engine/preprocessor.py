@@ -1,6 +1,5 @@
 import pyarrow.parquet as pq
 from abc import *
-from abc import abstractmethod
 from typing import (
     Union, 
     Dict, 
@@ -11,14 +10,10 @@ from typing import (
     Any
 ) 
 import pyarrow as pa
-from itertools import chain
-import shutil
-import psutil
 import os
 from torch.utils.data import (
     IterableDataset, 
-    Dataset, 
-    DataLoader
+    Dataset
 )
 from datasets import (
     load_dataset, 
@@ -26,26 +21,26 @@ from datasets import (
     DatasetDict,
     IterableDatasetDict
 )
-from my_logging import logger
+
+from opensearch_schema import IndexingSchema
+from error_code import InternalCodes
+from pydantic import BaseModel, ValidationError
+
+
+from dags.onemodelV3.logging import loguru_logger
+from loguru import Logger
 
 class AbstractPreprocessor(metaclass=ABCMeta):
     def __init__(self, args, **kwargs):
         self.args = args
     
     @classmethod
-    def clean_cache_dir(cls, cache_dir):
-        shutil.rmtree(cache_dir)
-
-    @classmethod
-    def load(cls, file_path:Union[str, List], split:str=None, stream:bool=True, keep_in_memory:bool=True, is_cache:bool=True, cache_dir:str='./.cache') -> IterableDataset:
-        
-        _, before_mem_usage_gb, before_mem_avail_gb = cls.get_ram_usage_percent()
-
+    def load(cls, file_path:Union[str, List], split:str=None, stream:bool=True, keep_in_memory:bool=True, is_cache:bool=False, cache_dir:str='./.cache') -> IterableDataset:
         if isinstance(file_path, List):
             dataset = load_dataset("parquet", 
                                    data_files=file_path, 
                                    split=split, 
-                                   keep_in_memory=keep_in_memory, 
+                                   keep_in_memory=keep_in_memory,
                                    streaming=stream,
                                    cache_dir=cache_dir)
 
@@ -64,73 +59,28 @@ class AbstractPreprocessor(metaclass=ABCMeta):
                                        cache_dir=cache_dir)
             else:
                 msg = f"{file_path} should be dir_path | file_path"
-                logger.error(msg)
                 raise FileNotFoundError(msg)
         else:
             msg = f"path should be in type (STR or List)"
-            logger.error(msg)
             raise TypeError(msg)
         
         if split is None:
             dataset = dataset['train']
         
-        mem_usage_gb = cls.get_ram_usage_percent()
-        memory_usage = {mem_usage_gb - before_mem_usage_gb}
-        msg = f"memory_usage for file: {memory_usage}" 
-        logger.info(msg)
-        if not is_cache:
-            cls.clean_cache()
-
         return dataset
-            
-    @classmethod
-    def clean_cache(cls, dataset:Union[IterableDataset, Dataset]):
-        dataset.cleanup_cache_files()
 
-
-    @staticmethod
-    def get_ram_usage_percent():
-        """Returns the current system-wide RAM usage as a percentage."""
-        mem = psutil.virtual_memory()
-        msg = f"mem_usage_percent: {mem.percent}, mem_usage_gb: {mem.used / (1024 ** 3)}, mem_avail_gb: {mem.available / (1024 ** 3) }" 
-        logger.info(msg)
-        return mem.used / (1024 ** 3)
-    
-    @staticmethod
-    def select_columns(dataset: Union[IterableDataset, Dataset, IterableDatasetDict], column_names:list=[]):
-        if isinstance(dataset, IterableDataset) or isinstance(dataset, IterableDatasetDict):
-            if isinstance(column_names, str):
-                 column_names = column_names.split(',')
-            elif isinstance(column_names, list):
-                pass
-            
-            else:
-                raise TypeError('column_names should be list or string type')
-            
-            dataset = dataset.select_columns(column_names)
-                
-        elif isinstance(dataset, Dataset):
-            dataset = dataset['train'].select_columns([column_names])
-            
-        else:
-            msg = f"dataset should be IterableDataset | Dataset"
-            logger.error(msg)
-            raise TypeError(msg)
-
-        return dataset
-    
-    
     @abstractmethod
     def preprocess(self, item):
         f"""code for apply to map function"""
 
-class StreamPreprocessor(AbstractPreprocessor):
+class OpensearchPreprocessor(AbstractPreprocessor):
     def __init__(self, args, **kwargs):        
         super().__init__(args)
-
+    
+    @classmethod
     def load(cls, file_path:Union[str, List], split:str=None, keep_in_memory:bool=True, is_cache:bool=True) -> IterableDataset:        
         stream = True
-        dataset = super(StreamPreprocessor, cls).load(
+        dataset = super(OpensearchPreprocessor, cls).load(
                 file_path=file_path, 
                 split=split, 
                 stream=stream, 
@@ -139,9 +89,56 @@ class StreamPreprocessor(AbstractPreprocessor):
         )
         return dataset
     
-    @abstractmethod
+    @classmethod
+    def doc_validation_check(cls, doc_body):
+        try:
+            data = IndexingSchema(**doc_body)
+            code = InternalCodes.SUCCESS
+            message = InternalCodes.get_message(code=code)
+        except ValidationError as e:
+            data = None
+            code = InternalCodes.PYDANTIC_VALIDATION_ERROR
+            message = InternalCodes.get_message(code=code, e=e)
+        finally:
+            return {"data":data, "code":code, "message":message, "doc":doc_body}
+
+    @classmethod
+    def profile_normalize(cls, profile:str, delimiter='<|n|>'):
+        """성별, 나이"""
+        mno_profiles = profile.split(delimiter)
+
+        
+        
+
+    @classmethod
     def preprocess(cls, item):
-        """ Implement preprocessing logic"""
+        
+        user_vector =  [float(x) for x in item['user_vector']]
+        svc_mgmt_num = str(item.get("svc_mgmt_num", "unk"))  
+        luna_id = item.get("luna_id", "unk")
+        is_active = True
+        is_adot = False if luna_id else True
+        mno_profile = item.get("mno_profile", "")
+        adot_profile = item.get("adot_profile", "")
+        behavior_profiles = item.get("behavior_profiles", "")
+        age = item.get("age", "unk")
+        gender = item.get("gender", "unk")
+        model_version = item["model_version"]
+
+        doc = {
+            "_id": svc_mgmt_num,
+            "svc_mgmt_num": svc_mgmt_num,
+            "luna_id": item.get("luna_id", "temp"),
+            "user_embedding":user_vector,
+            "mno_profile": mno_profile,
+            "adot_profile": adot_profile,
+            "behavior_profile": behavior_profiles,
+            "gender":gender,
+            "age":age,
+            "is_adot": is_adot,
+            "is_active": is_active,
+            "model_version": model_version
+        }
     
     @classmethod
     def apply_maps(cls, dataset:Dataset, functions_list: List[Tuple[Callable[..., Any], bool]]) -> Dataset:
