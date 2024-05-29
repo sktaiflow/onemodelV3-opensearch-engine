@@ -43,4 +43,4 @@ class InternalCodes(Enum):
             InternalCodes.SEARCH_ERROR: "[Opensearch] Search error",
             InternalCodes.SUCCESS: "[Success]",
         }
-        return messages.get(code, "Unknown code")
+        return messages.get(code, "Undefined code")
