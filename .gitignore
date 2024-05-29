@@ -120,3 +120,7 @@ dmypy.json
 
 Pipfile.lock
 Pipfile
+# all temp folder
+**/*temp*/**
+
+
