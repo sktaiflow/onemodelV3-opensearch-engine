@@ -20,27 +20,27 @@ class InternalCodeEnum(str, Enum):
 """
 class InternalCodes(Enum):
     # Error Codes
-    PYDANTIC_VALIDATION_ERROR = auto()
-    CREATE_INDEX_ERROR = auto()
-    DELETE_INDEX_ERROR = auto()
-    INDEXING_ERROR = auto()
-    UPDATE_DOCUMENT_ERROR = auto()
-    DELETE_DOCUMENT_ERROR = auto()
-    SEARCH_ERROR = auto()
+    PYDANTIC_VALIDATION_ERROR = "1000"
+    CREATE_INDEX_ERROR = "1001"
+    DELETE_INDEX_ERROR = "1002"
+    INDEXING_ERROR = "1003"
+    UPDATE_DOCUMENT_ERROR = "1004"
+    DELETE_DOCUMENT_ERROR = "1005"
+    SEARCH_ERROR = "1006"
 
     # Success Code
     SUCCESS = auto()
 
     @staticmethod
-    def get_message(code):
+    def get_message(code, e=''):
         messages = {
-            InternalCodes.PYDANTIC_VALIDATION_ERROR: "[Pydantic] Pydantic validation check error",
-            InternalCodes.CREATE_INDEX_ERROR: "[Opensearch] Create index error",
-            InternalCodes.DELETE_INDEX_ERROR: "[Opensearch] Delete index error",
-            InternalCodes.INDEXING_ERROR: "[Opensearch] Indexing error",
-            InternalCodes.UPDATE_DOCUMENT_ERROR: "[Opensearch] Update document error",
-            InternalCodes.DELETE_DOCUMENT_ERROR: "[Opensearch] Delete document error",
-            InternalCodes.SEARCH_ERROR: "[Opensearch] Search error",
+            InternalCodes.PYDANTIC_VALIDATION_ERROR: f"[Pydantic] Pydantic validation check error, detail_message:{e}",
+            InternalCodes.CREATE_INDEX_ERROR: f"[Opensearch] Create index error, detail_message:{e}",
+            InternalCodes.DELETE_INDEX_ERROR: f"[Opensearch] Delete index error, detail_message:{e}",
+            InternalCodes.INDEXING_ERROR: f"[Opensearch] Indexing error, detail_message:{e}",
+            InternalCodes.UPDATE_DOCUMENT_ERROR: f"[Opensearch] Update document error, detail_message:{e}",
+            InternalCodes.DELETE_DOCUMENT_ERROR: f"[Opensearch] Delete document error, detail_message:{e}",
+            InternalCodes.SEARCH_ERROR: f"[Opensearch] Search error, detail_message:{e}",
             InternalCodes.SUCCESS: "[Success]",
         }
         return messages.get(code, "Undefined code")
