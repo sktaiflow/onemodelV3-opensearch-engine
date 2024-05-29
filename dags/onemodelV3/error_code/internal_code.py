@@ -28,13 +28,13 @@ class InternalCodes(Enum):
     DELETE_DOCUMENT_ERROR = "1005"
     SEARCH_ERROR = "1006"
     CREATE_CLIENT_ERROR = "1007"
+    INDEX_CHECK = "1008"
 
     # Success Code
     SUCCESS = "200"
 
     # Warning Code
     INDEX_EXIST = "900"
-    INDEX_CHECK = "901"
     
     @staticmethod
     def get_message(code, e=''):
