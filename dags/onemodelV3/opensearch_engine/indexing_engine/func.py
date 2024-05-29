@@ -5,9 +5,8 @@ from datetime import datetime
 from dags.onemodelV3.logging import loguru_logger
 from loguru import Logger
 
-from opensearch_schema import ClientSetting
+from opensearch_schema import ClientSetting, IndexingSchema
 import traceback
-from opensearch_schema import IndexingSchema
 from pydantic import BaseModel, ValidationError
 from error_code import InternalCodes
 from functools import wraps
@@ -46,7 +45,7 @@ def update_documents(client, index_name, doc_id, doc_body, logger):
     return client.update(index=index_name, id=doc_id, body=update_body)
 
 @handle_operation(InternalCodes.CREATE_CLIENT_ERROR)
-def create_client(client_setting:ClientSetting,  logger:Logger, **kwargs):
+def create_client(client_setting:ClientSetting,  logger:Logger, **kwargs):        
     return OpenSearch(
         hosts = [{"host": client_setting.host, "port": client_setting.port}],
         http_compress=client_setting.http_compress,
