@@ -1,7 +1,5 @@
 from typing import List, Dict, Any
 
-from typing import List, Dict, Any
-
 def keyword_get_base_query(
         source: List = [], 
         must_query: List = [], 
@@ -146,11 +144,6 @@ def hybrid_get_base_query(
     }
     
     return base_query_dsl
-
-
-from typing import List, Dict, Any
-
-from typing import List, Dict, Any
 
 def keyword_get_base_query(
         source: List = [], 

@@ -1,5 +1,3 @@
-
-
 mappings = {
         "properties": {
             "svc_mgmt_num": {"type": "keyword"},
@@ -27,18 +25,54 @@ mappings = {
     }
 
 settings = {
+    "index.mapping.ignore_malformed": True,
+    "index.search.slowlog.threshold.query.warn": "1s",
     "index": {
         "number_of_shards": 4,
         "number_of_replicas": 1,
         "knn": True,
         "analysis":{
             "analyzer": {
-                "default": {
-                    "type": "standard"
-                }
+                "standard": {
+                    "type": "custom",
+                    "char_filter":["html_strip"],
+                    "tokenizer": "standard",
+                    "filter": ["synonyms", "stopwords", "trim", "lowercase"]
+                },
+                "seunjeon":{
+                    "type": "custom",
+                    "char_filter":["html_strip"],
+                    "tokenizer": "seunjeon_tokenizer",
+                    "filter": ["synonyms", "stopwords", "trim", "lowercase"]
+                },
+                "ngram":{
+                    "type": "custom",
+                    "char_filter":["html_strip"],
+                    "tokenizer": "ngram_tokenizer",
+                    "filter": ["synonyms", "stopwords", "trim", "lowercase"]
+                },
+                "nori_tokenizer": {
+                    "type": "custom",
+                    "char_filter":["html_strip"],
+                    "tokenizer": "nori_tokenizer",
+                    "filter": ["synonyms", "stopwords", "trim", "lowercase"]
             }
-        }        
-    }
+        },
+        "tokenizer":{
+            "seunjeon_tokenizer":{
+                "type": "seunjeon_tokenizer",
+                "user_dict_path": "temp",
+                "index_poses":[
+                               
+                ],
+            },
+            "nori_tokenizer": {
+                "type": "nori_tokenizer",
+                "decompound_mode": "mixed",
+                "discard_punctuation": "true"
+            },
+        }
+    }}
 }
 
 index_body = {
