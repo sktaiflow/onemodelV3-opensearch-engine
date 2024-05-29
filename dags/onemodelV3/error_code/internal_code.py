@@ -30,11 +30,11 @@ class InternalCodes(Enum):
     CREATE_CLIENT_ERROR = "1007"
 
     # Success Code
-    SUCCESS = auto()
+    SUCCESS = "200"
 
     # Warning Code
-    INDEX_EXIST = '900'
-    INDEX_CHECK = '901'
+    INDEX_EXIST = "900"
+    INDEX_CHECK = "901"
     
     @staticmethod
     def get_message(code, e=''):
