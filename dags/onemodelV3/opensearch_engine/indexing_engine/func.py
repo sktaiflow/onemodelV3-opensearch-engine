@@ -4,7 +4,7 @@ from opensearchpy import helpers, OpenSearch
 from datetime import datetime
 from dags.onemodelV3.logging import loguru_logger
 
-from opensearch_schema import ClientSetting, IndexingSchema
+from .opensearch_schema import ClientSetting, IndexingSchema
 import traceback
 from pydantic import BaseModel, ValidationError
 from error_code import InternalCodes
