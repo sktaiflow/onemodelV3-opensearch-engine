@@ -7,7 +7,7 @@ from dags.onemodelV3.logging import loguru_logger
 from .opensearch_schema import ClientSetting, IndexingSchema
 import traceback
 from pydantic import BaseModel, ValidationError
-from error_code import InternalCodes
+from onemodelV3.error_code import InternalCodes
 from functools import wraps
 from typing import Callable, Any, Dict, Optional
 
