@@ -3,7 +3,6 @@ import logging
 from opensearchpy import helpers, OpenSearch
 from datetime import datetime
 from dags.onemodelV3.logging import loguru_logger
-from loguru import Logger
 
 from opensearch_schema import ClientSetting, IndexingSchema
 import traceback
