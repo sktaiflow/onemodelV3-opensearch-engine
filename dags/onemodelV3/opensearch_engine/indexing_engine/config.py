@@ -1,3 +1,12 @@
+import os
+
+env = os.environ.get('env', 'stg')
+
+user_dict_package = "F73697254" if env == 'prd' else ''
+synonym_dict_package = "F246035528" if env == 'prd' else ''
+stopwords_package = "F230920579" if env == 'prd' else ''
+updateable = False if env == 'prd' else True
+
 mappings = {
         "properties": {
             "svc_mgmt_num": {"type": "keyword"},
@@ -30,49 +39,72 @@ settings = {
     "index": {
         "number_of_shards": 4,
         "number_of_replicas": 1,
+        "refresh_interval": "1s",
         "knn": True,
         "analysis":{
             "analyzer": {
                 "standard": {
                     "type": "custom",
                     "char_filter":["html_strip"],
-                    "tokenizer": "standard",
-                    "filter": ["synonyms", "stopwords", "trim", "lowercase"]
+                    "tokenizer": "standard_tokenizer",
+                    "filter": ["synonyms_filter", "stopwords_filter", "trim", "lowercase"]
                 },
                 "seunjeon":{
                     "type": "custom",
                     "char_filter":["html_strip"],
                     "tokenizer": "seunjeon_tokenizer",
-                    "filter": ["synonyms", "stopwords", "trim", "lowercase"]
+                    "filter": ["synonyms_filter", "stopwords_filter", "trim", "lowercase"]
                 },
                 "ngram":{
                     "type": "custom",
                     "char_filter":["html_strip"],
                     "tokenizer": "ngram_tokenizer",
-                    "filter": ["synonyms", "stopwords", "trim", "lowercase"]
+                    "filter": ["synonyms_filter", "stopwords_filter", "trim", "lowercase"]
                 },
                 "nori_tokenizer": {
                     "type": "custom",
                     "char_filter":["html_strip"],
                     "tokenizer": "nori_tokenizer",
-                    "filter": ["synonyms", "stopwords", "trim", "lowercase"]
+                    "filter": ["synonyms_filter", "stopwords_filter", "trim", "lowercase", "nori_part_of_speech_filter"]
             }
         },
         "tokenizer":{
+            "standard_tokenizer":{
+                "type": "seunjeon_tokenizer",
+                "user_dict_path": f"analyzers/{user_dict_package}"
+            },
             "seunjeon_tokenizer":{
                 "type": "seunjeon_tokenizer",
-                "user_dict_path": "temp",
-                "index_poses":[
-                               
-                ],
+                "user_dict_path": f"analyzers/{user_dict_package}",
+                "index_poses":[],
             },
             "nori_tokenizer": {
                 "type": "nori_tokenizer",
                 "decompound_mode": "mixed",
-                "discard_punctuation": "true"
+                "discard_punctuation": True,
+                "user_dict_path": f"analyzers/{user_dict_package}"
             },
+        },
+        "filter": {
+            "synonyms_filter":{
+                    "type": "synonym",
+                    "synonyms_path": f"analyzers/{synonym_dict_package}",
+                    "lenient": True,
+                    "updateable": updateable
+                },  
+            "stopwords_filter":{
+                "type": "stop",
+                "stopwords_path": f"analyzers/{stopwords_package}",
+                "lenient": True,
+                "updateable": updateable
+                },
+            "nori_part_of_speech_filter":{
+                "type": "nori_part_of_speech",
+                "stoptags": []
+                }
+            }
         }
-    }}
+    }
 }
 
 index_body = {
