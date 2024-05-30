@@ -3,11 +3,11 @@ import logging
 from opensearchpy import helpers, OpenSearch
 from datetime import datetime
 from dags.onemodelV3.logging import loguru_logger
+from dags.onemodelV3.error_code import InternalCodes
+from dags.onemodelV3.opensearch_engine.indexing_engine.opensearch_schema import ClientSetting, IndexingSchema
 
-from .opensearch_schema import ClientSetting, IndexingSchema
 import traceback
 from pydantic import BaseModel, ValidationError
-from onemodelV3.error_code import InternalCodes
 from functools import wraps
 from typing import Callable, Any, Dict, Optional
 
