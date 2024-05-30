@@ -2,9 +2,9 @@ import os
 
 env = os.environ.get('env', 'stg')
 
-user_dict_package = "F73697254" if env == 'prd' else ''
-synonym_dict_package = "F246035528" if env == 'prd' else ''
-stopwords_package = "F230920579" if env == 'prd' else ''
+user_dict_package = "" if env == 'prd' else "F73697254"
+synonym_dict_package = "" if env == 'prd' else "F246035528"
+stopwords_package = "" if env == 'prd' else "F230920579"
 updateable = False if env == 'prd' else True
 
 mappings = {
