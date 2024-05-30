@@ -45,7 +45,7 @@ def update_documents(client, index_name, doc_id, doc_body, logger):
 
 @handle_operation(InternalCodes.CREATE_CLIENT_ERROR)
 def create_client(client_setting:ClientSetting,  logger, **kwargs):        
-    return OpenSearch(
+    return OpenSearch(1
         hosts = [{"host": client_setting.host, "port": client_setting.port}],
         http_compress=client_setting.http_compress,
         use_ssl=client_setting.use_ssl,
@@ -75,8 +75,7 @@ def remove_index(client, index_name, logger):
     logger.info(f"[remove_index] remove_index {index_name}")
     return client.indices.delete(index=index_name)  
         
-@handle_operation(InternalCodes.INDEX_CHECK)
-def index_check(client, index_name, logger):
+def index_check(client, index_name):
     return client.indices.exists(index_name)
 
 @handle_operation(InternalCodes.INDEXING_ERROR)
