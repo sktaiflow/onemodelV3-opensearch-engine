@@ -13,6 +13,8 @@ from airflow.operators.python_operator import BranchPythonOperator, PythonOperat
 from airflow.sensors.hive_partition_sensor import HivePartitionSensor
 from airflow.sensors.web_hdfs_sensor import WebHdfsSensor
 from main import main
+from airflow.providers.sktvane.operators.nes import NesOperator
+from plugins.packages.schema.schema import AirflowVriable
 
 import os
 
@@ -33,15 +35,22 @@ with DAG(
         http_auth_password = Variable.get('http_auth_password')
         input_path = Variable.get('index_hdfs_path_temp')
         vpce = Variable.get('opensearch_stg_vpce')
-        env =Variable.get('temp_env')
-
-        main(
+        env = Variable.get('temp_env')
+        return AirflowVriable(
             http_auth_id=http_auth_id,
             http_auth_password=http_auth_password,
             input_path=input_path,
             vpce=vpce,
-            env=env
+            env=env,
         )
+
+        # main(
+        #     http_auth_id=http_auth_id,
+        #     http_auth_password=http_auth_password,
+        #     input_path=input_path,
+        #     vpce=vpce,
+        #     env=env
+        # )
 
     start = DummyOperator(task_id='start', dag=dag)
 
@@ -60,18 +69,13 @@ with DAG(
         provide_context=True,
         dag=dag
     )   
-    # test = PythonOperator(
-    #     task_id="test", 
-    #     python_callable='main.py',
-    #     op_kwargs={
-    #         "http_auth_id": Variable.get('http_auth_id'),
-    #         "http_auth_password": Variable.get('http_auth_password'),
-    #         "input_path": Variable.get('index_hdfs_path_temp'),
-    #         "vpce": Variable.get('opensearch_stg_vpce'),
-    #         "env": Variable.get('temp_env'),
-    #     },
-    #     dag=dag
-    # )
+
+    test = NesOperator(
+        task_id="onemodel_data_pipe_step2",
+        parameters={"current_dt": "{{ ds_nodash }}", "variables": run_main_script()},
+        input_nb="./notebook/indexing.ipynb",
+    )
 
     start >> run_script_task
     start >> indexing_input_sensor
+    start >> test
