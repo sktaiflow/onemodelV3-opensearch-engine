@@ -14,8 +14,7 @@ from airflow.sensors.hive_partition_sensor import HivePartitionSensor
 from airflow.sensors.web_hdfs_sensor import WebHdfsSensor
 from main import main
 from airflow.providers.sktvane.operators.nes import NesOperator
-from plugins.packages.schema.schema import AirflowVriable
-
+from packages.schema.schema import AirflowVriable
 import os
 
 with DAG(
