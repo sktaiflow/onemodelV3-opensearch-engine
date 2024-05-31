@@ -13,6 +13,13 @@ class ClientSetting(BaseModel):
     verify_certs:Optional[bool]=True
 
 
+class AirflowVriable(BaseModel):
+    http_auth_id:str
+    http_auth_password:str
+    input_path:str
+    vpce:str
+    env:str
+
 class GenderEnum(str, Enum):
     male = "male"
     female = "female" 
