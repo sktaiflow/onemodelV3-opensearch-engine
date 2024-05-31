@@ -14,7 +14,7 @@ from airflow.sensors.hive_partition_sensor import HivePartitionSensor
 from airflow.sensors.web_hdfs_sensor import WebHdfsSensor
 from main import main
 
-
+import os
 
 with DAG(
     dag_id="opensearch-indexing-test",
@@ -48,7 +48,7 @@ with DAG(
     indexing_input_sensor = WebHdfsSensor(
             task_id="indexing_input_sensor",
             webhdfs_conn_id='aidp_hadoop_ip_1',
-            filepath=Variable.get('index_hdfs_path_temp'),
+            filepath=os.path.join(Variable.get('index_hdfs_path_temp'), "SUCCESS.txt"),
             poke_interval=60 * 1,
             timeout=60 * 60 * 24,
             dag=dag
