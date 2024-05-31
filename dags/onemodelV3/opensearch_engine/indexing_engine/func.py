@@ -45,7 +45,7 @@ def update_documents(client, index_name, doc_id, doc_body, logger):
 
 @handle_operation(InternalCodes.CREATE_CLIENT_ERROR)
 def create_client(client_setting:ClientSetting,  logger, **kwargs):        
-    return OpenSearch(1
+    return OpenSearch(
         hosts = [{"host": client_setting.host, "port": client_setting.port}],
         http_compress=client_setting.http_compress,
         use_ssl=client_setting.use_ssl,
