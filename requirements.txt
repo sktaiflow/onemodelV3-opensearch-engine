@@ -1,0 +1,4 @@
+loguru==0.7.2
+datasets==2.19.1
+opensearch-py==2.5.0
+pydantic==2.7.1
