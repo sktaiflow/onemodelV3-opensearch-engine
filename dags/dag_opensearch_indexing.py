@@ -15,7 +15,7 @@ with DAG(
     dag_id="opensearch-indexing=test",
     default_args={"retries": 2},
     description="DAG with own plugins",
-    schedule="*/20 * * * *",
+    schedule="7 * * * *",
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
     tags=["test"],
@@ -35,5 +35,5 @@ with DAG(
         },
         dag=dag
     )
-    
+
     test
