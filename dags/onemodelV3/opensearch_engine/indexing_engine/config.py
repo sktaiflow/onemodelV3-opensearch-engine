@@ -55,12 +55,6 @@ settings = {
                     "tokenizer": "seunjeon_tokenizer",
                     "filter": ["synonyms_filter", "stopwords_filter", "trim", "lowercase"]
                 },
-                "ngram":{
-                    "type": "custom",
-                    "char_filter":["html_strip"],
-                    "tokenizer": "ngram_tokenizer",
-                    "filter": ["synonyms_filter", "stopwords_filter", "trim", "lowercase"]
-                },
                 "nori_tokenizer": {
                     "type": "custom",
                     "char_filter":["html_strip"],
