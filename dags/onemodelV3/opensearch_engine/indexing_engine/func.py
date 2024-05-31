@@ -62,12 +62,13 @@ def create_index(client, index_name, index_body, logger):
         logger.info("[create_index] create new index")
         code = InternalCodes.SUCCESS
         response = client.indices.create(index=index_name, body=index_body)
-        return {"response": response, "code": code, "message": message}  
+        message = InternalCodes.get_message(code)
+        return {"response": response, "code": code.value, "message": message}  
     else:
         logger.info(f"[index_check] index: {index_name} exists")
         code = InternalCodes.INDEX_EXIST
         message = InternalCodes.get_message(code)
-        return {"response": None, "code": code, "message": message}  
+        return {"response": None, "code": code.value, "message": message}  
         
 
 @handle_operation(InternalCodes.DELETE_INDEX_ERROR)
