@@ -82,12 +82,7 @@ settings = {
                 "type": "nori_tokenizer",
                 "decompound_mode": "mixed",
                 "discard_punctuation": True,
-                "user_dictionary": f"analyzers/{user_dict_package}",
-                "stoptags": [
-                    "E", "IC", "J", "MAG", "MAJ",
-                    "MM", "SP", "SSC", "SSO", "SC",
-                    "SE", "XPN", "XSA", "XSN", "XSV",
-                    "UNA", "NA", "VSV"]
+                "user_dictionary": f"analyzers/{user_dict_package}"
             },
         },
         "filter": {
@@ -105,8 +100,11 @@ settings = {
                 },
             "nori_part_of_speech_filter":{
                 "type": "nori_part_of_speech",
-                "stoptags": []
-                }
+                "stoptags": [
+                    "E", "IC", "J", "MAG", "MAJ",
+                    "MM", "SP", "SSC", "SSO", "SC",
+                    "SE", "XPN", "XSA", "XSN", "XSV",
+                    "UNA", "NA", "VSV"]
             }
         }
     }
