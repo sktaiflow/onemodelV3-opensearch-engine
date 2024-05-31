@@ -12,6 +12,7 @@ from airflow.operators.dummy import DummyOperator
 from airflow.operators.python_operator import BranchPythonOperator, PythonOperator
 from airflow.sensors.hive_partition_sensor import HivePartitionSensor
 from airflow.sensors.web_hdfs_sensor import WebHdfsSensor
+from main import main
 
 
 
@@ -27,6 +28,21 @@ with DAG(
 
     dag.doc_md = __doc__
 
+    def run_main_script(**kwargs):
+        http_auth_id = Variable.get('http_auth_id')
+        http_auth_password = Variable.get('http_auth_password')
+        input_path = Variable.get('index_hdfs_path_temp')
+        vpce = Variable.get('opensearch_stg_vpce')
+        env =Variable.get('temp_env')
+
+        main(
+            http_auth_id=http_auth_id,
+            http_auth_password=http_auth_password,
+            input_path=input_path,
+            vpce=vpce,
+            env=env
+        )
+
     start = DummyOperator(task_id='start', dag=dag)
 
     indexing_input_sensor = WebHdfsSensor(
@@ -37,19 +53,25 @@ with DAG(
             timeout=60 * 60 * 24,
             dag=dag
         )
+    
+    run_script_task = PythonOperator(
+    task_id='run_main_script',
+    python_callable=run_main_script,
+    provide_context=True,
+    dag=dag,
+    )   
+    # test = PythonOperator(
+    #     task_id="test", 
+    #     python_callable='main.py',
+    #     op_kwargs={
+    #         "http_auth_id": Variable.get('http_auth_id'),
+    #         "http_auth_password": Variable.get('http_auth_password'),
+    #         "input_path": Variable.get('index_hdfs_path_temp'),
+    #         "vpce": Variable.get('opensearch_stg_vpce'),
+    #         "env": Variable.get('temp_env'),
+    #     },
+    #     dag=dag
+    # )
 
-    test = PythonOperator(
-        task_id="test", 
-        python_callable='main.py',
-        op_kwargs={
-            "http_auth_id": Variable.get('http_auth_id'),
-            "http_auth_password": Variable.get('http_auth_password'),
-            "input_path": Variable.get('index_hdfs_path_temp'),
-            "vpce": Variable.get('opensearch_stg_vpce'),
-            "env": Variable.get('temp_env'),
-        },
-        dag=dag
-    )
-
-    start >> test
+    start >> run_script_task
     start >> indexing_input_sensor
