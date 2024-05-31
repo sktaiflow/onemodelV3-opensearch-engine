@@ -1,4 +1,4 @@
-from skt.ye import slack_send
+#from skt.ye import slack_send
 
 def main(**kwargs):
     http_auth_id = kwargs.get('http_auth_id')
@@ -21,15 +21,15 @@ def main(**kwargs):
         env: {env}
     """
 
-    slack_send(
-        text=template,
-        username="SKT",
-        channel="#prec_onemodel_alarming_stg",
-        icon_emoji=":large_blue_circle:",
-        blocks=None,
-        dataframe=False,
-        adot=True,
-    )
+    # slack_send(
+    #     text=template,
+    #     username="SKT",
+    #     channel="#prec_onemodel_alarming_stg",
+    #     icon_emoji=":large_blue_circle:",
+    #     blocks=None,
+    #     dataframe=False,
+    #     adot=True,
+    # )
 
 if __name__ == "__main__":
     import sys
