@@ -6,7 +6,7 @@ class ClientSetting(BaseModel):
     host:str
     port:int
     http_auth:Tuple[str, str]
-    timeout:Optional[int]=1
+    timeout:Optional[int]=2
     pool_maxsize: Optional[int]=40
     http_compress:Optional[bool]=True,
     use_ssl:Optional[bool]=True,
