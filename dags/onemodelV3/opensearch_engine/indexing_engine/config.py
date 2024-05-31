@@ -82,7 +82,12 @@ settings = {
                 "type": "nori_tokenizer",
                 "decompound_mode": "mixed",
                 "discard_punctuation": True,
-                "user_dictionary": f"analyzers/{user_dict_package}"
+                "user_dictionary": f"analyzers/{user_dict_package}",
+                "stoptags": [
+                    "E", "IC", "J", "MAG", "MAJ",
+                    "MM", "SP", "SSC", "SSO", "SC",
+                    "SE", "XPN", "XSA", "XSN", "XSV",
+                    "UNA", "NA", "VSV"]
             },
         },
         "filter": {
