@@ -47,7 +47,7 @@ with DAG(
 
     indexing_input_sensor = WebHdfsSensor(
             task_id="indexing_input_sensor",
-            webhdfs_conn_id='aidp_hadoop_ip_1',
+            webhdfs_conn_id='aidp_hadoop_ip_2',
             filepath=os.path.join(Variable.get('index_hdfs_path_temp'), "SUCCESS.txt"),
             poke_interval=60 * 1,
             timeout=60 * 60 * 24,
