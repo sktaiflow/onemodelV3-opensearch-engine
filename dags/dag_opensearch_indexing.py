@@ -55,10 +55,10 @@ with DAG(
         )
     
     run_script_task = PythonOperator(
-    task_id='run_main_script',
-    python_callable=run_main_script,
-    provide_context=True,
-    dag=dag,
+        task_id='run_main_script',
+        python_callable=run_main_script,
+        provide_context=True,
+        dag=dag
     )   
     # test = PythonOperator(
     #     task_id="test", 
