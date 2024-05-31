@@ -107,7 +107,7 @@ settings = {
                     "UNA", "NA", "VSV"]
             }
         }
-    }
+    }}
 }
 
 index_body = {
