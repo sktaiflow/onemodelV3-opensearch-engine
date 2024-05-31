@@ -49,6 +49,12 @@ settings = {
                     "tokenizer": "standard_tokenizer",
                     "filter": ["synonyms_filter", "stopwords_filter", "trim", "lowercase"]
                 },
+                "seunjeon":{
+                    "type": "custom",
+                    "char_filter":["html_strip"],
+                    "tokenizer": "seunjeon_tokenizer",
+                    "filter": ["synonyms_filter", "stopwords_filter", "trim", "lowercase"]
+                },
                 "ngram":{
                     "type": "custom",
                     "char_filter":["html_strip"],
@@ -66,6 +72,11 @@ settings = {
             "standard_tokenizer":{
                 "type": "seunjeon_tokenizer",
                 "user_dictionary": f"analyzers/{user_dict_package}"
+            },
+            "seunjeon_tokenizer":{
+                "type": "seunjeon_tokenizer",
+                "user_dictionary": f"analyzers/{user_dict_package}",
+                "index_poses":[],
             },
             "nori_tokenizer": {
                 "type": "nori_tokenizer",
