@@ -1,7 +1,7 @@
-from data_pipe.preprocessor import StreamPreprocessor
+from dags.onemodelV3.opensearch_engine.indexing_engine.preprocessor import OpensearchPreprocessor
 from config import index_body
-from my_logging import logger
-from opensearch_schema import ClientSetting, IndexingSchema
+from dags.onemodelV3.logging.my_logging import loguru_logger
+from dags.onemodelV3.opensearch_engine.indexing_engine.opensearch_schema import ClientSetting, IndexingSchema
 
 from .func import (
     create_client,
@@ -13,90 +13,42 @@ from .func import (
 )
 
 from datetime import datetime, timedelta
-
-class OpensearchPreprocessor(StreamPreprocessor):
-    index_name = "userProfile"
-    
-    def __init__(self, args, **kwargs):        
-        super().__init__(args)
-    
-    @classmethod
-    def set_index_name(cls, new_name):
-        cls.index_name = new_name
-
-    @classmethod
-    def preprocess(cls, item):
-        
-        user_vector =  [float(x) for x in item['user_vector']]
-        svc_mgmt_num = str(item.get("svc_mgmt_num", "temp"))  
-        luna_id = item.get("luna_id", None)
-        is_active = True
-        is_adot = False if luna_id else True
-        mno_profile = item.get("mno_profile", "")
-        adot_profile = item.get("adot_profile", "")
-        behavior_profiles = item.get("behavior_profiles", "")
-        age = item.get("age", 31)
-        gender = item.get("gender", "unknown")
-        model_version = item["model_version"]
-
-        doc = {
-            "_id": svc_mgmt_num,
-            "svc_mgmt_num": svc_mgmt_num,
-            "luna_id": item.get("luna_id", "temp"),
-            "user_embedding":user_vector,
-            "mno_profile": mno_profile,
-            "adot_profile": adot_profile,
-            "behavior_profile": behavior_profiles,
-            "gender":gender,
-            "age":age,
-            "is_adot": is_adot,
-            "is_active": is_active,
-            "model_version": model_version
-        }
-        
-        try: 
-            validated_data = IndexingSchema(**doc)
-            yield validated_data.dict()
-                
-        except Exception as e:
-            logger.info(f"Validation error: {e}")
-            pass
-    
-    @classmethod
-    def preprocess_map(cls, data):
-        for item in cls.preprocess(data):
-            yield {
-                "_op_type": "index",
-                "_index": cls.index_name,
-                "_source": item
-            }
-
-    @classmethod
-    def apply_map(cls, dataset):
-        return dataset.map(cls.preprocess_map)
-    
-    @classmethod
-    def indexing_datset(cls, file_path:str):
-        dataset = cls.load(file_path=file_path)
-        return cls.apply_map(dataset=dataset)
-
+import os
 
 
 
 def main(args):
 
-    opensearch_client = create_client(client_setting=args.client_setting, logger=logger)
+    os.environ['env'] = args.env
+    from dags.onemodelV3.opensearch_engine.indexing_engine.config import index_body
+
+    client_setting = ClientSetting(**{
+        "host": args.vpce_endpoint,
+        "port": args.https_port,
+        "http_auth": (f"{args.opensearch_id}", f"{args.opensearch_path}"),
+        "timeout": 10,
+        "pool_maxsize": 40,
+        "http_compress": True,
+        "use_ssl": True,
+        "verify_certs": True
+    })
+    
+    opensearch_client = create_client(client_setting=client_setting, logger=loguru_logger)
+
+
     dt = datetime.today().strftime('%Y-%m-%d')
     index_name = OpensearchPreprocessor.index_name + '_' + args.env + '_' + dt
     OpensearchPreprocessor.set_index_name(new_name=index_name)
     
     ## local path Success 파일 체크
     local_path = ''
-    
-
-    is_created = create_index(client=opensearch_client, index_name=index_name, index_body=index_body, logger=logger)
+    1
+    is_created = create_index(client=opensearch_client, index_name=index_name, index_body=index_body, logger=loguru_logger)
     
     # iterable Dataset
 
     dataset = OpensearchPreprocessor.indexing_datset(file_path=local_path)
     response = indexing_data(client=opensearch_client, generator=dataset)
+
+if __name__ == "__main__":
+    main(args=args)

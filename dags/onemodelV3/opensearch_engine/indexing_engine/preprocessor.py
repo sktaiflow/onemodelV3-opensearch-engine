@@ -74,9 +74,15 @@ class AbstractPreprocessor(metaclass=ABCMeta):
         f"""code for apply to map function"""
 
 class OpensearchPreprocessor(AbstractPreprocessor):
+    index_name = "onemodelV3"
+    
     def __init__(self, args, **kwargs):        
         super().__init__(args)
     
+    @classmethod
+    def set_index_name(cls, new_name):
+        cls.index_name = new_name
+
     @classmethod
     def load(cls, file_path:Union[str, List], split:str=None, keep_in_memory:bool=True, is_cache:bool=True) -> IterableDataset:        
         stream = True
