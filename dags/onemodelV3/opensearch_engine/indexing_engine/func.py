@@ -61,8 +61,8 @@ def create_index(client, index_name, index_body, logger):
     if not is_exists:
         logger.info("[create_index] create new index")
         code = InternalCodes.SUCCESS
-        message = InternalCodes.get_message(code)
-        return {"response": None, "code": code, "message": message}  
+        response = client.indices.create(index=index_name, body=index_body)
+        return {"response": response, "code": code, "message": message}  
     else:
         logger.info(f"[index_check] index: {index_name} exists")
         code = InternalCodes.INDEX_EXIST
