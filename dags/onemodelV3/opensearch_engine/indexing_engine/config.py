@@ -5,7 +5,7 @@ env = os.environ.get('env', 'stg')
 user_dict_package = "" if env == 'prd' else "F73697254"
 synonym_dict_package = "" if env == 'prd' else "F246035528"
 stopwords_package = "" if env == 'prd' else "F230920579"
-updateable = False if env == 'prd' else True
+updateable = False if env == 'prd' else False
 
 mappings = {
         "properties": {
@@ -64,7 +64,7 @@ settings = {
         },
         "tokenizer":{
             "standard_tokenizer":{
-                "type": "seunjeon_tokenizer",
+                "type": "standard",
                 "user_dictionary": f"analyzers/{user_dict_package}"
             },
             "seunjeon_tokenizer":{

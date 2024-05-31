@@ -55,13 +55,14 @@ def create_client(client_setting:ClientSetting,  logger, **kwargs):
         http_auth=client_setting.http_auth
     )
 
-@handle_operation(InternalCodes.CREATE_INDEX_ERROR)
 def create_index(client, index_name, index_body, logger):
     """ 신규 인덱스를 생성 """
     is_exists = index_check(client=client, index_name=index_name)
     if not is_exists:
         logger.info("[create_index] create new index")
-        return client.indices.create(index=index_name, body=index_body)
+        code = InternalCodes.SUCCESS
+        message = InternalCodes.get_message(code)
+        return {"response": None, "code": code, "message": message}  
     else:
         logger.info(f"[index_check] index: {index_name} exists")
         code = InternalCodes.INDEX_EXIST
