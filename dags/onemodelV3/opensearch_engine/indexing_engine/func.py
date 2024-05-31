@@ -17,10 +17,10 @@ def handle_operation(error_code: InternalCodes):
         def wrapper(*args, **kwargs):
             try:
                 response = func(*args, **kwargs)
-                code = InternalCodes.SUCCESS
+                code = InternalCodes.SUCCESS.value
                 message = InternalCodes.get_message(code)
             except Exception as e:
-                code = error_code
+                code = error_code.value
                 message = InternalCodes.get_message(code, e)
                 response = None
             finally:
