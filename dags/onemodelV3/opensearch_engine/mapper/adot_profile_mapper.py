@@ -17,7 +17,7 @@ new_adot_profile_mappings = {
     '선호 도메인': 'preference',
     '성별': 'gender',
     '나이': 'age',
-    '선호 아이템': 'preference',
+    '선호 아이템': 'preference_item',
     '선호 카테고리': 'preference',
     '인기 컨텐츠 선호도': 'popularity_preference_level',
     '사용성 기준': 'adot_status',
