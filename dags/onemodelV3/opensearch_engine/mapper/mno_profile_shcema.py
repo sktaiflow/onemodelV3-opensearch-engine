@@ -2,7 +2,7 @@ from enum import Enum
 from pydantic import BaseModel, Field
 
 class MnoprofileKeys(Enum):
-    INTERESTS.value = 'interests'
+    INTERESTS= 'interests'
     GENDER = 'gender'
     AGE = 'age'
     SERVICE_DURATION = 'service_duration'
