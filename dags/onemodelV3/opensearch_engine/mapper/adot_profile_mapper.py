@@ -19,7 +19,7 @@ new_adot_profile_mappings = {
     '나이': 'age',
     '선호 아이템': 'preference',
     '선호 카테고리': 'preference',
-    '인기 컨텐츠 선호도': 'preference_level',
+    '인기 컨텐츠 선호도': 'popularity_preference_level',
     '사용성 기준': 'adot_status',
     '활성 상태':'adot_status',
     '다중 도메인 성향': 'multi_domain_tendency',
