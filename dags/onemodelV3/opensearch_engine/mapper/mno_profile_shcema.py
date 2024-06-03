@@ -2,7 +2,7 @@ from enum import Enum
 from pydantic import BaseModel, Field
 
 class MnoprofileKeys(Enum):
-    INTERESTS = 'interests'
+    INTERESTS.value = 'interests'
     GENDER = 'gender'
     AGE = 'age'
     SERVICE_DURATION = 'service_duration'
@@ -22,22 +22,22 @@ class MnoprofileKeys(Enum):
 default_null = ['없음', '', '모름']
 
 DEFAULT_VALUES = {
-    MnoprofileKeys.INTERESTS: default_null,
-    MnoprofileKeys.GENDER: default_null,
-    MnoprofileKeys.AGE: default_null,
-    MnoprofileKeys.SERVICE_DURATION: default_null,
-    MnoprofileKeys.DAYS_AFTER_CHANGE: default_null,
-    MnoprofileKeys.PLAN_NAME: default_null,
-    MnoprofileKeys.PLAN_PRICE: default_null,
-    MnoprofileKeys.AVG_DATA_USAGE: ['없음', '', '모름', '0gb'],
-    MnoprofileKeys.DEVICE_PRICE: default_null,
-    MnoprofileKeys.DEVICE_MANUFACTURER: default_null,
-    MnoprofileKeys.MEMBERSHIP_LEVEL: default_null,
-    MnoprofileKeys.MEMBERSHIP_HISTORY: default_null,
-    MnoprofileKeys.FAMILY_BUNDLE_HISTORY: default_null,
-    MnoprofileKeys.ROAMING_HISTORY: default_null,
-    MnoprofileKeys.SECOND_DEVICE: default_null,
-    MnoprofileKeys.MICROPAYMENT_HISTORY: ['없음', '', '모름', '0원']
+    MnoprofileKeys.INTERESTS.value: default_null,
+    MnoprofileKeys.GENDER.value: default_null,
+    MnoprofileKeys.AGE.value: default_null,
+    MnoprofileKeys.SERVICE_DURATION.value: default_null,
+    MnoprofileKeys.DAYS_AFTER_CHANGE.value: default_null,
+    MnoprofileKeys.PLAN_NAME.value: default_null,
+    MnoprofileKeys.PLAN_PRICE.value: default_null,
+    MnoprofileKeys.AVG_DATA_USAGE.value: default_null + ['0gb'],
+    MnoprofileKeys.DEVICE_PRICE.value: default_null,
+    MnoprofileKeys.DEVICE_MANUFACTURER.value: default_null,
+    MnoprofileKeys.MEMBERSHIP_LEVEL.value: default_null,
+    MnoprofileKeys.MEMBERSHIP_HISTORY.value: default_null,
+    MnoprofileKeys.FAMILY_BUNDLE_HISTORY.value: default_null,
+    MnoprofileKeys.ROAMING_HISTORY.value: default_null,
+    MnoprofileKeys.SECOND_DEVICE.value: default_null,
+    MnoprofileKeys.MICROPAYMENT_HISTORY.value: default_null + ['0원']
 }
 
 def select_default_value(field_name: MnoprofileKeys) -> str:
@@ -46,7 +46,7 @@ def select_default_value(field_name: MnoprofileKeys) -> str:
     return DEFAULT_VALUES.get(field_name, default_null)
 
 class MnoprofileKeysKeysModel(BaseModel):
-    interests: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.INTERESTS))
+    interests: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.INTER.valueESTS))
     gender: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.GENDER))
     age: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.AGE))
     service_duration: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.SERVICE_DURATION))
