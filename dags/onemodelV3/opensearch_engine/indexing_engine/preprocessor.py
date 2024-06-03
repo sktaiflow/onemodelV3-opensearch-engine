@@ -28,12 +28,16 @@ from dags.onemodelV3.opensearch_engine.indexing_engine.opensearch_schema import 
 from dags.onemodelV3.error_code import InternalCodes
 from dags.onemodelV3.logging import loguru_logger
 from dags.onemodelV3.opensearch_engine.mapper import (
-    DEFAULT_VALUES, 
+    MNO_DEFAULT_VALUES, 
     MnoprofileKeys, 
-    select_default_value, 
-    MnoprofileKeysKeysModel, 
+    mno_select_default_value, 
     mno_profile_mappings,
-    new_mno_profile_mappings
+    new_mno_profile_mappings,
+    ADOT_DEFAULT_VALUES,
+    AdotprofileKeys,
+    adot_select_default_value,
+    adot_profile_mappings,
+    new_adot_profile_mappings
 )
 
 from collections import defaultdict
