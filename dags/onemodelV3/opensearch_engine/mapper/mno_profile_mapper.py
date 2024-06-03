@@ -13,7 +13,7 @@ mno_profile_mappings = {
     '멤버쉽 사용 이력': 'membership_history',
     '가족 결합 이력': 'family_bundle_history',
     '로밍 사용 이력': 'roaming_history',
-    '세컨 디바이스 보유 여부': 'second_device',
+    '세컨 디바이스 보유': 'second_device',
     '소액 및 DCB 결제 이력': 'micropayment_history'
 }
 
