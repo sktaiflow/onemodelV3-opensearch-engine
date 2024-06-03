@@ -2,7 +2,7 @@ mno_profile_mappings = {
     '관심사': 'interests',
     '성별': 'gender',
     '나이': 'age',
-    '서비스 사용기간': 'service_duration',
+    '서비스 사용 기간': 'service_duration',
     '기변 후 경과일': 'days_after_change',
     '요금제 이름': 'plan_name',
     '요금제 가격': 'plan_price',
@@ -13,7 +13,7 @@ mno_profile_mappings = {
     '멤버십 사용 이력': 'membership_history',
     '가족 결합 이력': 'family_bundle_history',
     '로밍 사용 이력': 'roaming_history',
-    '세컨 디바이스 보유 여부': 'second_device',
+    '세컨디바이스 보유 여부': 'second_device',
     '소액 및 DCB 결제 이력': 'micropayment_history'
 }
 
@@ -32,7 +32,7 @@ new_mno_profile_mappings = {
     '멤버십 사용 이력': 'mno_status',
     '가족 결합 이력': 'mno_status',
     '로밍 사용 이력': 'mno_status',
-    '세컨 디바이스 보유 여부': 'mno_status',
+    '세컨디바이스 보유 여부': 'mno_status',
     '소액 및 DCB 결제 이력': 'mno_status'
 
 }
