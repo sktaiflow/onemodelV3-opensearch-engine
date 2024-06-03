@@ -21,7 +21,7 @@ class MnoprofileKeys(Enum):
 
 default_null = ['없음', '', '모름']
 
-DEFAULT_VALUES = {
+MNO_DEFAULT_VALUES = {
     MnoprofileKeys.INTERESTS.value: default_null,
     MnoprofileKeys.GENDER.value: default_null,
     MnoprofileKeys.AGE.value: default_null,
@@ -40,25 +40,27 @@ DEFAULT_VALUES = {
     MnoprofileKeys.MICROPAYMENT_HISTORY.value: default_null + ['0원']
 }
 
-def select_default_value(field_name: MnoprofileKeys) -> str:
+def mno_select_default_value(field_name: MnoprofileKeys) -> str:
     # Logic to select the appropriate default value
     # For demonstration, we'll just return the first value in the list
-    return DEFAULT_VALUES.get(field_name, default_null)
+    return MNO_DEFAULT_VALUES.get(field_name, default_null)
 
+"""
 class MnoprofileKeysKeysModel(BaseModel):
-    interests: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.INTER.valueESTS))
-    gender: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.GENDER))
-    age: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.AGE))
-    service_duration: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.SERVICE_DURATION))
-    days_after_change: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.DAYS_AFTER_CHANGE))
-    plan_name: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.PLAN_NAME))
-    plan_price: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.PLAN_PRICE))
-    avg_data_usage: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.AVG_DATA_USAGE))
-    device_price: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.DEVICE_PRICE))
-    device_manufacturer: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.DEVICE_MANUFACTURER))
-    membership_level: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.MEMBERSHIP_LEVEL))
-    membership_history: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.MEMBERSHIP_HISTORY))
-    family_bundle_history: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.FAMILY_BUNDLE_HISTORY))
-    roaming_history: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.ROAMING_HISTORY))
-    second_device: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.SECOND_DEVICE))
-    micropayment_history: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.MICROPAYMENT_HISTORY))
+    interests: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.INTERESTS.value))
+    gender: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.GENDER.value))
+    age: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.AGE.value))
+    service_duration: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.SERVICE_DURATION.value))
+    days_after_change: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.DAYS_AFTER_CHANGE.value))
+    plan_name: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.PLAN_NAME.value))
+    plan_price: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.PLAN_PRICE.value))
+    avg_data_usage: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.AVG_DATA_USAGE.value))
+    device_price: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.DEVICE_PRICE.value))
+    device_manufacturer: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.DEVICE_MANUFACTURER))
+    membership_level: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.MEMBERSHIP_LEVEL))
+    membership_history: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.MEMBERSHIP_HISTORY))
+    family_bundle_history: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.FAMILY_BUNDLE_HISTORY))
+    roaming_history: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.ROAMING_HISTORY))
+    second_device: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.SECOND_DEVICE))
+    micropayment_history: str = Field(default_factory=lambda: mno_select_default_value(MnoprofileKeys.MICROPAYMENT_HISTORY))
+"""
