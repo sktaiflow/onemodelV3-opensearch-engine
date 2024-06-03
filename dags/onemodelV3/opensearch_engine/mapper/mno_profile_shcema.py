@@ -29,7 +29,7 @@ DEFAULT_VALUES = {
     MnoprofileKeys.DAYS_AFTER_CHANGE: default_null,
     MnoprofileKeys.PLAN_NAME: default_null,
     MnoprofileKeys.PLAN_PRICE: default_null,
-    MnoprofileKeys.AVG_DATA_USAGE: default_null + ['0gb'],
+    MnoprofileKeys.AVG_DATA_USAGE: ['없음', '', '모름', '0gb'],
     MnoprofileKeys.DEVICE_PRICE: default_null,
     MnoprofileKeys.DEVICE_MANUFACTURER: default_null,
     MnoprofileKeys.MEMBERSHIP_LEVEL: default_null,
@@ -37,7 +37,7 @@ DEFAULT_VALUES = {
     MnoprofileKeys.FAMILY_BUNDLE_HISTORY: default_null,
     MnoprofileKeys.ROAMING_HISTORY: default_null,
     MnoprofileKeys.SECOND_DEVICE: default_null,
-    MnoprofileKeys.MICROPAYMENT_HISTORY: default_null + ['0원']
+    MnoprofileKeys.MICROPAYMENT_HISTORY: ['없음', '', '모름', '0원']
 }
 
 def select_default_value(field_name: MnoprofileKeys) -> str:
