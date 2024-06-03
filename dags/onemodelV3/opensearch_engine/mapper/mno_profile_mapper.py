@@ -34,5 +34,4 @@ new_mno_profile_mappings = {
     '로밍 사용 이력': 'mno_status',
     '세컨디바이스 보유 여부': 'mno_status',
     '소액 및 DCB 결제 이력': 'mno_status'
-
 }
