@@ -9,11 +9,11 @@ mno_profile_mappings = {
     '3개월 평균 데이터 사용량': 'avg_data_usage',
     '단말기 가격': 'device_price',
     '단말기 제조사': 'device_manufacturer',
-    '멤버십 등급': 'membership_level',
-    '멤버십 사용 이력': 'membership_history',
+    '멤버쉽 등급': 'membership_level',
+    '멤버쉽 사용 이력': 'membership_history',
     '가족 결합 이력': 'family_bundle_history',
     '로밍 사용 이력': 'roaming_history',
-    '세컨 디바이스 보유': 'second_device',
+    '세컨 디바이스 보유 여부': 'second_device',
     '소액 및 DCB 결제 이력': 'micropayment_history'
 }
 
@@ -28,11 +28,11 @@ new_mno_profile_mappings = {
     '3개월 평균 데이터 사용량': 'avg_data_usage',
     '단말기 가격': 'mno_status',
     '단말기 제조사': 'mno_status',
-    '멤버십 등급': 'mno_status',
-    '멤버십 사용 이력': 'mno_status',
+    '멤버쉽 등급': 'mno_status',
+    '멤버쉽 사용 이력': 'mno_status',
     '가족 결합 이력': 'mno_status',
     '로밍 사용 이력': 'mno_status',
-    '세컨 디바이스 보유 여부': 'mno_status',
+    '세컨 디바이스 보유': 'mno_status',
     '소액 및 DCB 결제 이력': 'mno_status'
 
 }
