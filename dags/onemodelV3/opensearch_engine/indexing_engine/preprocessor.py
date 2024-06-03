@@ -133,20 +133,16 @@ class OpensearchPreprocessor(AbstractPreprocessor):
             else:
                 mno_profile_dict[key] = val
 
-        template_dict = defaultdict(list)
+        mno_template_dict = defaultdict(list)
         for key, val in new_mno_profile_mappings.items():
-            template_dict[val] = []
+            mno_template_dict[val] = []
 
         for key, val in mno_profile_dict.items():
             new_feature = new_mno_profile_mappings[key]
-            template_dict[new_feature].append(val)
+            mno_template_dict[new_feature].append(val)
 
-        template = f"""
-        preference: {preference}
-        gender: {gender}
-        age: {age}
-        mno_status: {mno_status}
-        """
+
+        adot_profiles = adot_profile.split(delimiter)
 
         
         
