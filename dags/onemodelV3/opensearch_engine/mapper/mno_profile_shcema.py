@@ -43,7 +43,7 @@ DEFAULT_VALUES = {
 def select_default_value(field_name: MnoprofileKeys) -> str:
     # Logic to select the appropriate default value
     # For demonstration, we'll just return the first value in the list
-    return DEFAULT_VALUES.get(field_name, default_null)[0]
+    return DEFAULT_VALUES.get(field_name, default_null)
 
 class MnoprofileKeysKeysModel(BaseModel):
     interests: str = Field(default_factory=lambda: select_default_value(MnoprofileKeys.INTERESTS))
