@@ -21,14 +21,22 @@ from datasets import (
     DatasetDict,
     IterableDatasetDict
 )
-
-from opensearch_schema import IndexingSchema
-from error_code import InternalCodes
 from pydantic import BaseModel, ValidationError
 
 
+from dags.onemodelV3.opensearch_engine.indexing_engine.opensearch_schema import IndexingSchema
+from dags.onemodelV3.error_code import InternalCodes
 from dags.onemodelV3.logging import loguru_logger
-from loguru import Logger
+from dags.onemodelV3.opensearch_engine.mapper import (
+    DEFAULT_VALUES, 
+    MnoprofileKeys, 
+    select_default_value, 
+    MnoprofileKeysKeysModel, 
+    mno_profile_mappings,
+    new_mno_profile_mappings
+)
+
+from collections import defaultdict
 
 class AbstractPreprocessor(metaclass=ABCMeta):
     def __init__(self, args, **kwargs):
@@ -111,7 +119,34 @@ class OpensearchPreprocessor(AbstractPreprocessor):
     @classmethod
     def profile_normalize(cls, profile:str, delimiter='<|n|>'):
         """성별, 나이"""
-        mno_profiles = profile.split(delimiter)
+        mno_profile = profile["mno_profile"]
+        adot_profile = profile["adot_profile"]
+        ##
+
+        mno_profiles = mno_profile.split(delimiter)
+        mno_profile_dict = dict()
+        for profile in mno_profiles:
+            key, val = profile.split(':')
+            null_values = mno_profile_mappings[key]
+            if val in select_default_value(field_name=null_values):
+                continue
+            else:
+                mno_profile_dict[key] = val
+
+        template_dict = defaultdict(list)
+        for key, val in new_mno_profile_mappings.items():
+            template_dict[val] = []
+
+        for key, val in mno_profile_dict.items():
+            new_feature = new_mno_profile_mappings[key]
+            template_dict[new_feature].append(val)
+
+        template = f"""
+        preference: {preference}
+        gender: {gender}
+        age: {age}
+        mno_status: {mno_status}
+        """
 
         
         
