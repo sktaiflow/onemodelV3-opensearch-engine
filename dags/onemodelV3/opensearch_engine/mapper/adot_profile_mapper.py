@@ -8,7 +8,8 @@ adot_profile_mappings = {
     '다중 도메인 성향': 'multi_domain_tendency',
     '인기 컨텐츠 선호도': 'popular_content_preference',
     '사용성 기준': 'usability_criteria',
-    '헤비 유즈 도메인': 'heavy_use_domains'
+    '헤비 유즈 도메인': 'heavy_use_domains',
+    '헤비 유저인 도메인': 'heavy_user_domains'
 }
 
 

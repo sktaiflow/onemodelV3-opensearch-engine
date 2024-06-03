@@ -12,6 +12,7 @@ class AdotprofileKeys(Enum):
     POPULAR_CONTENT_PREFERENCE = 'popular_content_preference'
     USABILITY_CRITERIA = 'usability_criteria'
     HEAVY_USE_DOMAINS = 'heavy_use_domains'
+    HEAVY_USER_DOMAINS = 'heavy_user_domains'
 
 
 
@@ -27,7 +28,8 @@ ADOT_DEFAULT_VALUES = {
     AdotprofileKeys.MULTI_DOMAIN_TENDENCY.value: default_null,
     AdotprofileKeys.POPULAR_CONTENT_PREFERENCE.value: default_null,
     AdotprofileKeys.USABILITY_CRITERIA.value: default_null,
-    AdotprofileKeys.HEAVY_USE_DOMAINS.value: default_null
+    AdotprofileKeys.HEAVY_USE_DOMAINS.value: default_null,
+    AdotprofileKeys.HEAVY_USER_DOMAINS.value: default_null
 }
 
 def adot_select_default_value(field_name: AdotprofileKeys) -> str:
