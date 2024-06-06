@@ -24,11 +24,11 @@ class RawInputSchema(BaseModel):
     luna_id: str
     age: Optional[int] = Field(None, gt=0)
     gender:GenderEnum = Field(..., description="Gender of the person")
-    mno_profile_feature: Optional[str]
-    adot_profile: Optional[str]
-    behavior_profile: Optional[str]
-    is_adot: Optional[bool]
-    created_at: str
+    mno_profile_feature: Optional[str] = Field("", description="Gender of the person")
+    adot_profile_feature: Optional[str] = Field("", description="Gender of the person")
+    behavior_profile: Optional[str] = Field(None, description="Gender of the person")
+    is_adot: Optional[bool] = False
+    create_at: str
     user_vector:List[float]
     class Config:
         extra = 'forbid'
