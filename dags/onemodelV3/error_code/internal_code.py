@@ -29,6 +29,7 @@ class InternalCodes(Enum):
     SEARCH_ERROR = "1006"
     CREATE_CLIENT_ERROR = "1007"
     INDEX_CHECK = "1008"
+    PREPROCESSING_ERROR = "1009"
 
     # Success Code
     SUCCESS = "200"
@@ -48,6 +49,6 @@ class InternalCodes(Enum):
             InternalCodes.SEARCH_ERROR: f"[ERROR] Search error, detail_message:{e}",
             InternalCodes.INDEX_EXIST: "[WARNING] INDEX EXISTS",
             InternalCodes.INDEX_CHECK: "[ERROR] INDEX CHECK FAILED",
-            InternalCodes.SUCCESS: "[Success]",
+            InternalCodes.SUCCESS: "SUCCESS",
         }
         return messages.get(code, f"Undefined code, detail_message:{e}")
