@@ -21,8 +21,10 @@ from datasets import (
     DatasetDict,
     IterableDatasetDict
 )
-from pydantic import BaseModel, ValidationError
-
+from pydantic import (
+    BaseModel, 
+    ValidationError
+)
 
 from dags.onemodelV3.opensearch_engine.indexing_engine.opensearch_schema import IndexingSchema
 from dags.onemodelV3.error_code import InternalCodes
@@ -40,44 +42,118 @@ from dags.onemodelV3.opensearch_engine.mapper import (
     new_adot_profile_mappings
 )
 
+from dags.onemodelV3.opensearch_engine.indexing_engine.regex import (
+    adot_profile_regex
+)
+
+from dags.onemodelV3.opensearch_engine.indexing_engine import (
+    RawInputSchema,
+    IndexingSchema
+)
+
+import re
 from collections import defaultdict
 
-class AbstractPreprocessor(metaclass=ABCMeta):
-    def __init__(self, args, **kwargs):
-        self.args = args
-    
-    @classmethod
-    def load(cls, file_path:Union[str, List], split:str=None, stream:bool=True, keep_in_memory:bool=True, is_cache:bool=False, cache_dir:str='./.cache') -> IterableDataset:
-        if isinstance(file_path, List):
-            dataset = load_dataset("parquet", 
-                                   data_files=file_path, 
-                                   split=split, 
-                                   keep_in_memory=keep_in_memory,
-                                   streaming=stream,
-                                   cache_dir=cache_dir)
+def read_blacklist(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        blacklist_words = [line.strip() for line in file]
+    return blacklist_words
 
-        elif isinstance(file_path, str):
-            if os.path.isfile(file_path):
-                dataset = load_dataset("parquet", 
-                                       data_files=file_path, 
-                                       split=split, 
-                                       keep_in_memory=keep_in_memory, 
-                                       streaming=stream,
-                                       cache_dir=cache_dir)
+
+def normalize_adot_profiels(adot_profile, delimiter ="<|n|>"):
+    adot_profiles = adot_profile.split(delimiter)
+    adot_profile_dict = dict()
+    for profile in adot_profiles:
+        key, val = profile.split(':', 1)
+        key = key.strip()
+        val = val.strip()
+        null_values = adot_profile_mappings[key]
             
-            elif os.path.isdir(file_path):
-                dataset = load_dataset(file_path, 
-                                       streaming=stream,
-                                       cache_dir=cache_dir)
-            else:
-                msg = f"{file_path} should be dir_path | file_path"
-                raise FileNotFoundError(msg)
+        if val in adot_select_default_value(field_name=null_values):
+            pass
         else:
-            msg = f"path should be in type (STR or List)"
+            adot_profile_dict[key] = val
+            
+    adot_template_dict = defaultdict(list)
+    for key, val in new_adot_profile_mappings.items():
+        adot_template_dict[val] = []
+
+def normalize_mno_profiels(mno_profile, delimiter ="<|n|>"):
+    mno_profiles = mno_profile.split(delimiter)
+    mno_profile_dict = dict()
+    for profile in mno_profiles:
+        key, val = profile.split(':')
+        null_values = mno_profile_mappings[key]
+        if val in mno_select_default_value(field_name=null_values):
+            """ 없음 모름 '' ... etc 이면 값을 제거한다."""
+            continue
+        elif val.strip() =="있음":
+            mno_profile_dict[key] = key.split("이력")[0].strip()
+        else:
+            mno_profile_dict[key] = val.strip()
+
+    mno_template_dict = defaultdict(list)
+
+    for key, val in mno_profile_dict.items():
+        new_feature = new_mno_profile_mappings[key]
+        mno_template_dict[new_feature].append(val)
+
+    mno_preferences = mno_template_dict.get('preference', [])
+    mno_preference_template = ""        
+
+    if mno_preferences:
+        mno_preference_dict = defaultdict(set)
+        mno_preference = mno_preferences[0]
+        mnopreference_list = mno_preference.split(',')
+        for mno_prefernce in mnopreference_list:
+            split_mno_preference = mno_prefernce.split('_')
+            if len(split_mno_preference) == 2:
+                upper_cate, lower_cate = split_mno_preference
+            else:
+                upper_cate = split_mno_preference[0]
+
+            mno_preference_dict[upper_cate].add(lower_cate)
+
+        for key, val in mno_preference_dict.items():
+            val_str = ','.join(val)
+            if mno_preference_template == "": mno_preference_template = f"{key}: {val_str}"
+            else: mno_preference_template += '\n' + f"{key}: {val_str}"              
+        
+    mno_template_dict['preference'] = mno_preference_template
+
+
+def normalize_behavior_profiels(profile):
+    pass
+
+
+class BaseParquetProcessor(metaclass=ABCMeta):
+
+    @classmethod
+    def load(
+            cls, 
+            file_path_list:List, 
+            split:str=None, 
+            stream:bool=True, 
+            keep_in_memory:bool=False, 
+            cache_dir:str='./.cache'
+        ) -> Dataset:
+        """ load datset from parquet files"""
+
+        if isinstance(file_path_list, List):
+            dataset = load_dataset(
+                                path ="parquet", 
+                                data_files=file_path_list, 
+                                split=split, 
+                                keep_in_memory=keep_in_memory,
+                                streaming=stream,
+                                cache_dir=cache_dir
+                                )
+
+        else:
+            msg = f"path should be in type (List)"
             raise TypeError(msg)
         
-        if split is None:
-            dataset = dataset['train']
+        if split is None: dataset = dataset['train']
         
         return dataset
 
@@ -85,7 +161,7 @@ class AbstractPreprocessor(metaclass=ABCMeta):
     def preprocess(self, item):
         f"""code for apply to map function"""
 
-class OpensearchPreprocessor(AbstractPreprocessor):
+class OpensearchPreprocessor(BaseParquetProcessor):
     index_name = "onemodelV3"
     
     def __init__(self, args, **kwargs):        
@@ -96,90 +172,89 @@ class OpensearchPreprocessor(AbstractPreprocessor):
         cls.index_name = new_name
 
     @classmethod
-    def load(cls, file_path:Union[str, List], split:str=None, keep_in_memory:bool=True, is_cache:bool=True) -> IterableDataset:        
-        stream = True
+    def load(
+            cls, 
+            file_path:List, 
+            split:str=None, 
+            stream=True,
+            keep_in_memory:bool=False,
+            cache_dir:str='./.cache'
+        ) -> IterableDataset:        
+        
         dataset = super(OpensearchPreprocessor, cls).load(
                 file_path=file_path, 
                 split=split, 
                 stream=stream, 
                 keep_in_memory=keep_in_memory,
-                is_cache=is_cache
+                cache_dir=cache_dir
         )
         return dataset
     
     @classmethod
-    def doc_validation_check(cls, doc_body):
+    def _validate_component_inputs(cls, doc_body:Dict, schema:BaseModel) -> Dict:
         try:
-            data = IndexingSchema(**doc_body)
+            data = schema(**doc_body)
             code = InternalCodes.SUCCESS
             message = InternalCodes.get_message(code=code)
+            failed_doc = None
+
         except ValidationError as e:
             data = None
             code = InternalCodes.PYDANTIC_VALIDATION_ERROR
             message = InternalCodes.get_message(code=code, e=e)
+            failed_doc = doc_body
+
         finally:
-            return {"data":data, "code":code, "message":message, "doc":doc_body}
+            return {"data":data, "code":code, "message":message, "failed_doc":failed_doc}
 
     @classmethod
-    def profile_normalize(cls, profile:str, delimiter='<|n|>'):
-        """성별, 나이"""
-        mno_profile = profile["mno_profile"]
-        adot_profile = profile["adot_profile"]
-        ##
+    def _profile_normalize(cls, data:str):
+        try:
+            mno_profile = normalize_mno_profiels(data["mno_profile_feature"])
+            adot_profile = normalize_adot_profiels(data["adot_profile_feature"])
+            behavior_profile = normalize_behavior_profiels(data["behavior_profile_feature"])
+            data["mno_profile_feature"] = mno_profile
+            data["mno_profile_feature"] = adot_profile
+            data["behavior_profile_feature"] = behavior_profile
+            failed_doc = None
+            code =  InternalCodes.SUCCESS
+            message = "SUCCESS"
+        except Exception as e:
+            data = None 
+            failed_doc = data
+            code  = InternalCodes.PREPROCESSING_ERROR
+            message = e
+        finally:
+            return {"data":data, "code": code, "message": message, "failed_doc":failed_doc}
 
-        mno_profiles = mno_profile.split(delimiter)
-        mno_profile_dict = dict()
-        for profile in mno_profiles:
-            key, val = profile.split(':')
-            null_values = mno_profile_mappings[key]
-            if val in select_default_value(field_name=null_values):
-                continue
+    @classmethod
+    def preprocess(cls, doc):
+        """ bulk indexing example
+        actions = [
+            {"_op_type": "index", "_index": "test-index", "_id": 1, "_source": {"field1": "value1"}},
+            {"_op_type": "index", "_index": "test-index", "_id": 2, "_source": {"field1": "value2"}},
+            {"_op_type": "update", "_index": "test-index", "_id": 1, "doc": {"field1": "updated_value1"}},
+            {"_op_type": "delete", "_index": "test-index", "_id": 2}
+        ]
+        success, failed = bulk(client, actions)
+        """
+        validation_response = cls._validate_component_inputs(doc_body=doc, schema=RawInputSchema)
+        if validation_response["code"] == InternalCodes.SUCCESS:
+            data = validation_response["data"]
+            normalize_response = cls._profile_normalize(data.dict())
+            if normalize_response["code"] == InternalCodes.SUCCESS:
+                data = normalize_response["data"]
+                indexing_template = {
+                    "_op_type": "index",
+                    "_index": cls.index_name,
+                    "_id": data["svc_mgmt_num"],
+                    "_source": data
+                }
+                return {"data":indexing_template, "code":InternalCodes.SUCCESS, "message": "SUCCESS", "failed_doc":None}
             else:
-                mno_profile_dict[key] = val
-
-        mno_template_dict = defaultdict(list)
-        for key, val in new_mno_profile_mappings.items():
-            mno_template_dict[val] = []
-
-        for key, val in mno_profile_dict.items():
-            new_feature = new_mno_profile_mappings[key]
-            mno_template_dict[new_feature].append(val)
-
-
-        adot_profiles = adot_profile.split(delimiter)
-
-        
-        
-
-    @classmethod
-    def preprocess(cls, item):
-        
-        user_vector =  [float(x) for x in item['user_vector']]
-        svc_mgmt_num = str(item.get("svc_mgmt_num", "unk"))  
-        luna_id = item.get("luna_id", "unk")
-        is_active = True
-        is_adot = False if luna_id else True
-        mno_profile = item.get("mno_profile", "")
-        adot_profile = item.get("adot_profile", "")
-        behavior_profiles = item.get("behavior_profiles", "")
-        age = item.get("age", "unk")
-        gender = item.get("gender", "unk")
-        model_version = item["model_version"]
-
-        doc = {
-            "_id": svc_mgmt_num,
-            "svc_mgmt_num": svc_mgmt_num,
-            "luna_id": item.get("luna_id", "temp"),
-            "user_embedding":user_vector,
-            "mno_profile": mno_profile,
-            "adot_profile": adot_profile,
-            "behavior_profile": behavior_profiles,
-            "gender":gender,
-            "age":age,
-            "is_adot": is_adot,
-            "is_active": is_active,
-            "model_version": model_version
-        }
+                return normalize_response
+        else:
+            return validation_response       
     
     @classmethod
     def apply_maps(cls, dataset:Dataset, functions_list: List[Tuple[Callable[..., Any], bool]]) -> Dataset:
