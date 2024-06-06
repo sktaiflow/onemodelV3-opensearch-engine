@@ -19,6 +19,21 @@ class GenderEnum(str, Enum):
     unknown = "unknown"
 
 
+class RawInputSchema(BaseModel):
+    svc_mgmt_num: str = Field(..., min_length=1)
+    luna_id: str
+    age: Optional[int] = Field(None, gt=0)
+    gender:GenderEnum = Field(..., description="Gender of the person")
+    mno_profile_feature: Optional[str]
+    adot_profile: Optional[str]
+    behavior_profile: Optional[str]
+    is_adot: Optional[bool]
+    created_at: str
+    user_vector:List[float]
+    class Config:
+        extra = 'forbid'
+
+
 class IndexingSchema(BaseModel):
     _id:str
     svc_mgmt_num: str = Field(..., min_length=1)
