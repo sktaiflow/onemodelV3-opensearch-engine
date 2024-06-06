@@ -26,7 +26,7 @@ class RawInputSchema(BaseModel):
     gender:GenderEnum = Field(..., description="Gender of the person")
     mno_profile_feature: Optional[str] = Field("", description="Gender of the person")
     adot_profile_feature: Optional[str] = Field("", description="Gender of the person")
-    behavior_profile: Optional[str] = Field(None, description="Gender of the person")
+    behavior_profile_feature: Optional[str] = Field(None, description="Gender of the person")
     is_adot: Optional[bool] = False
     create_at: str
     user_vector:List[float]
