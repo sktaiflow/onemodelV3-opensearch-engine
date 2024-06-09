@@ -58,9 +58,7 @@ def create_client(client_setting:ClientSetting,  logger, **kwargs):
 @exception_handle_operation
 def create_index(client, index_name, index_body, logger):
     """ 신규 인덱스를 생성 """
-    response = client.indices.create(index=index_name, body=index_body)
-
-        
+    return client.indices.create(index=index_name, body=index_body)
 
 @exception_handle_operation(InternalCodes.DELETE_INDEX_ERROR)
 def remove_index(client, index_name, logger):
