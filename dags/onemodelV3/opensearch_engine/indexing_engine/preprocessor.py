@@ -309,10 +309,6 @@ class OpensearchPreprocessor(BaseParquetProcessor):
             else:
                 failed_docs.append(response)
 
-        # processed_batch = {
-        #     key: [result[key] for result in batch_results]
-        #     for key in batch_results[0].keys()
-        # }
         return batch_results, failed_docs
     
     @classmethod
