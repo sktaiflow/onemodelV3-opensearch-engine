@@ -61,6 +61,9 @@ def read_blacklist(file_path):
 
 
 def normalize_adot_profiels(adot_profile, delimiter ="<|n|>"):
+    if not adot_profile:
+        return ""
+     
     adot_profiles = adot_profile.split(delimiter)
     adot_profile_dict = dict()
     for profile in adot_profiles:
@@ -115,6 +118,8 @@ def normalize_adot_profiels(adot_profile, delimiter ="<|n|>"):
         return dict(adot_template_dict)
 
 def normalize_mno_profiels(mno_profile, delimiter ="<|n|>"):
+    if not mno_profile:
+        return ""
     mno_profiles = mno_profile.split(delimiter)
     mno_profile_dict = dict()
     for profile in mno_profiles:
@@ -252,7 +257,7 @@ class OpensearchPreprocessor(BaseParquetProcessor):
         try:
             mno_profile = normalize_mno_profiels(data["mno_profile_feature"])
             adot_profile = normalize_adot_profiels(data["adot_profile_feature"])
-            behavior_profile = normalize_behavior_profiels(data.get("behavior_profile_feature", ""))
+            behavior_profile = normalize_behavior_profiels(data["behavior_profile_feature"])
             data["mno_profile_feature"] = mno_profile
             data["adot_profile_feature"] = adot_profile
             data["behavior_profile_feature"] = behavior_profile
