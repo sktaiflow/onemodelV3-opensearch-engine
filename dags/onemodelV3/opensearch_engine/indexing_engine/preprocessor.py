@@ -298,6 +298,7 @@ class OpensearchPreprocessor(BaseParquetProcessor):
     
     @classmethod
     def batch_process(cls, batch_docs:List) -> Dict:
+        """ usage: dataloader: DataLoader(dataset, batch_size:10, collate_fn=batch_process)"""
         batch_results = []
         for doc in batch_docs:
             response = cls.preprocess(doc=doc)
