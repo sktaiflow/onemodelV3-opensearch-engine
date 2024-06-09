@@ -23,7 +23,7 @@ class RawInputSchema(BaseModel):
     svc_mgmt_num: str = Field(..., min_length=1)
     luna_id: str
     age: Optional[int] = Field(None, gt=0)
-    gender:GenderEnum = Field(..., description="Gender of the person")
+    gender:GenderEnum = Field("unknown", description="Gender of the person")
     mno_profile_feature: Optional[str] = Field("", description="Gender of the person")
     adot_profile_feature: Optional[str] = Field("", description="Gender of the person")
     behavior_profile_feature: Optional[str] = Field("", description="Gender of the person")
@@ -38,7 +38,14 @@ class RawInputSchema(BaseModel):
             return cls.model_fields[info.field_name].default
         else:
             return v
-    
+        
+    @field_validator('gender', mode="before")
+    @classmethod
+    def set_empty_string_if_none(cls, v, info:ValidationInfo):
+        if v is None or v in ['null']:
+            return cls.model_fields[info.field_name].default
+        else:
+            return v
     model_config = {
         "extra": "forbid"
     }
