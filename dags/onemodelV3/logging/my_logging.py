@@ -6,7 +6,7 @@ from pathlib import Path
 # Remove the default loguru handlers
 loguru_logger.remove()
 
-def configure_logger(date_str: str):
+def configure_logger(date_str: str, log_root_path:str="home/x1112436/shared/x1112436/log/onemodelV3/opensearch"):
     """
     Configure the logger with a dynamic log file path based on the provided date string.
     
@@ -15,7 +15,7 @@ def configure_logger(date_str: str):
     """
     # Parse the date string to create the log file path
     year, month, day = date_str.split('/')
-    log_file_path = Path(__file__).parent / "logs" / year / month / day / "application.log"
+    log_file_path = Path(log_root_path) / "logs" / year / month / day / "application.log"
 
     # Create the logs directory if it doesn't exist
     log_file_path.parent.mkdir(parents=True, exist_ok=True)
