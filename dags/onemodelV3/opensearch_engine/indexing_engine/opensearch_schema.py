@@ -34,7 +34,7 @@ class RawInputSchema(BaseModel):
     @field_validator('mno_profile_feature', 'adot_profile_feature', 'behavior_profile_feature', mode="before")
     @classmethod
     def set_empty_string_if_none(cls, v, info:ValidationInfo):
-        if v is None:
+        if v is None or v in ['null']:
             return cls.model_fields[info.field_name].default
         else:
             return v
