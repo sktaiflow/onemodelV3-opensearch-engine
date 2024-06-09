@@ -300,15 +300,20 @@ class OpensearchPreprocessor(BaseParquetProcessor):
     def batch_process(cls, batch_docs:List) -> Dict:
         """ usage: dataloader: DataLoader(dataset, batch_size:10, collate_fn=batch_process)"""
         batch_results = []
+        failed_docs = []
+
         for doc in batch_docs:
             response = cls.preprocess(doc=doc)
-            batch_results.append(response)
-            
-        processed_batch = {
-            key: [result[key] for result in batch_results]
-            for key in batch_results[0].keys()
-        }
-        return processed_batch
+            if response["code"] == InternalCodes.SUCCESS.value:
+                batch_results.append(response)
+            else:
+                failed_docs.append(response)
+
+        # processed_batch = {
+        #     key: [result[key] for result in batch_results]
+        #     for key in batch_results[0].keys()
+        # }
+        return batch_results, failed_docs
     
     @classmethod
     def apply_maps(cls, dataset:Dataset, functions_list: List[Tuple[Callable[..., Any], bool]]) -> Dataset:
