@@ -261,6 +261,7 @@ class OpensearchPreprocessor(BaseParquetProcessor):
             data["mno_profile_feature"] = mno_profile
             data["adot_profile_feature"] = adot_profile
             data["behavior_profile_feature"] = behavior_profile
+            data["gender"] = data.gender.value
             result = data
             failed_doc = None
             code =  InternalCodes.SUCCESS
