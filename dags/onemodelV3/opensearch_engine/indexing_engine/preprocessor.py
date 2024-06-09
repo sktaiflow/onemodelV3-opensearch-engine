@@ -158,6 +158,10 @@ def normalize_mno_profiels(mno_profile, delimiter ="<|n|>"):
     mno_template_dict['preference'] = mno_preference_template
     return dict(mno_template_dict)
 
+def batch_normalize_mno_profiels(mno_profile, delimiter ="<|n|>"):
+    pass
+
+
 def normalize_behavior_profiels(profile):
     pass
 
@@ -264,7 +268,7 @@ class OpensearchPreprocessor(BaseParquetProcessor):
             return {"data":data, "code": code, "message": message, "failed_doc":failed_doc}
 
     @classmethod
-    def preprocess(cls, doc):
+    def preprocess(cls, doc:Dict) -> Dict:
         """ bulk indexing example
         actions = [
             {"_op_type": "index", "_index": "test-index", "_id": 1, "_source": {"field1": "value1"}},
@@ -291,6 +295,15 @@ class OpensearchPreprocessor(BaseParquetProcessor):
                 return  
         else:
             return validation_response       
+    
+    @classmethod
+    def batch_process(cls, docs:List) -> Dict:
+        result = []
+        for doc in docs:
+            response = cls.preprocess(doc=doc)
+            result.append(response)
+
+        return result
     
     @classmethod
     def apply_maps(cls, dataset:Dataset, functions_list: List[Tuple[Callable[..., Any], bool]]) -> Dataset:
