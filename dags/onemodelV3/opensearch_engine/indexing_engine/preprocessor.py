@@ -210,7 +210,7 @@ class OpensearchPreprocessor(BaseParquetProcessor):
     @classmethod
     def load(
             cls, 
-            file_path:List, 
+            file_path_list:List, 
             split:str=None, 
             stream=True,
             keep_in_memory:bool=False,
@@ -218,7 +218,7 @@ class OpensearchPreprocessor(BaseParquetProcessor):
         ) -> IterableDataset:        
         
         dataset = super(OpensearchPreprocessor, cls).load(
-                file_path=file_path, 
+                file_path_list=file_path_list, 
                 split=split, 
                 stream=stream, 
                 keep_in_memory=keep_in_memory,
