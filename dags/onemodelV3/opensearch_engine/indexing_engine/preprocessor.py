@@ -78,6 +78,42 @@ def normalize_adot_profiels(adot_profile, delimiter ="<|n|>"):
     for key, val in new_adot_profile_mappings.items():
         adot_template_dict[val] = []
 
+    domain = adot_profile_dict.get('선호 도메인', '')
+    category = adot_profile_dict.get('선호 카테고리', '')
+    item = adot_profile_dict.get('선호 아이템','')
+    
+    if domain:
+        preference_template = f"{domain}"
+        preference_item_template = ''
+    else:
+        preference_template = ''
+        preference_item_template = ''
+    
+    pattern = r'^(.*?)\((.*?)\)$'
+    if category:
+        match = re.search(pattern, category)
+        prefix = match.group(1)
+        cate = match.group(2)
+        if cate:
+            preference_template +=f",{prefix}:{cate}"
+    
+    if item:
+        match = re.search(pattern, item)
+        if match:
+            # Extract the string between parentheses
+            item = match.group(2)
+            preference_item_template = f"{item}"
+            
+        preference_template = re.sub(r'\s+(?=:)', '', preference_template)
+        preference_template = re.sub(r':\s+', ':', preference_template)
+        # Remove spaces after the colon
+        preference_item_template = re.sub(r'\s+(?=:)', '', preference_item_template)
+        preference_item_template = re.sub(r':\s+', ':', preference_item_template)
+        adot_template_dict['preference'] = preference_template
+        adot_template_dict['preference_item'] = preference_item_template
+        #adot_preferences = adot_template_dict.get('preference', [])
+        return dict(adot_template_dict)
+
 def normalize_mno_profiels(mno_profile, delimiter ="<|n|>"):
     mno_profiles = mno_profile.split(delimiter)
     mno_profile_dict = dict()
