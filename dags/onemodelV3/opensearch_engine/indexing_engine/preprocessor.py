@@ -294,16 +294,22 @@ class OpensearchPreprocessor(BaseParquetProcessor):
             else:
                 return  
         else:
-            return validation_response       
+            return validation_response         
     
     @classmethod
-    def batch_process(cls, docs:List) -> Dict:
-        result = []
-        for doc in docs:
-            response = cls.preprocess(doc=doc)
-            result.append(response)
+    def batch_process(cls, batch_docs:List) -> Dict:
+        batch_results = []
 
-        return result
+        for doc_values in zip(*batch_docs.values()):
+            doc = dict(zip(batch_docs.keys(), doc_values))
+            response = cls.preprocess(doc=doc)
+            batch_results.append(response)
+            
+        processed_batch = {
+            key: [result[key] for result in batch_results]
+            for key in batch_results[0].keys()
+        }
+        return processed_batch
     
     @classmethod
     def apply_maps(cls, dataset:Dataset, functions_list: List[Tuple[Callable[..., Any], bool]]) -> Dataset:
