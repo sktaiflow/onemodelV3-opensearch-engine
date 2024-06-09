@@ -290,7 +290,7 @@ class OpensearchPreprocessor(BaseParquetProcessor):
                     "_id": data["svc_mgmt_num"],
                     "_source": data
                 }
-                return {"data":indexing_template, "code":InternalCodes.SUCCESS, "message": "SUCCESS", "failed_doc":None}
+                return {"data":indexing_template, "code":InternalCodes.SUCCESS.value, "message": "SUCCESS", "failed_doc":None}
             else:
                 return  
         else:
