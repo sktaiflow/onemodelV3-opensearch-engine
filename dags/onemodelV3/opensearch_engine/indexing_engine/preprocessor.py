@@ -292,16 +292,14 @@ class OpensearchPreprocessor(BaseParquetProcessor):
                 }
                 return {"data":indexing_template, "code":InternalCodes.SUCCESS.value, "message": "SUCCESS", "failed_doc":None}
             else:
-                return  
+                return normalize_response
         else:
             return validation_response         
     
     @classmethod
     def batch_process(cls, batch_docs:List) -> Dict:
         batch_results = []
-
-        for doc_values in zip(*batch_docs.values()):
-            doc = dict(zip(batch_docs.keys(), doc_values))
+        for doc in batch_docs:
             response = cls.preprocess(doc=doc)
             batch_results.append(response)
             
