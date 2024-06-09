@@ -120,7 +120,7 @@ def normalize_mno_profiels(mno_profile, delimiter ="<|n|>"):
             else: mno_preference_template += '\n' + f"{key}: {val_str}"              
         
     mno_template_dict['preference'] = mno_preference_template
-
+    return dict(mno_template_dict)
 
 def normalize_behavior_profiels(profile):
     pass
@@ -252,7 +252,7 @@ class OpensearchPreprocessor(BaseParquetProcessor):
                 }
                 return {"data":indexing_template, "code":InternalCodes.SUCCESS, "message": "SUCCESS", "failed_doc":None}
             else:
-                return normalize_response
+                return  
         else:
             return validation_response       
     
