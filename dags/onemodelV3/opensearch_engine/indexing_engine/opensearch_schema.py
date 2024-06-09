@@ -23,7 +23,7 @@ class RawInputSchema(BaseModel):
     svc_mgmt_num: str = Field(..., min_length=1)
     luna_id: str
     age: Optional[int] = Field(None, gt=0)
-    gender:GenderEnum = Field(..., description="Gender of the person")
+    gender:GenderEnum.value = Field(..., description="Gender of the person")
     mno_profile_feature: Optional[str] = Field("", description="Gender of the person")
     adot_profile_feature: Optional[str] = Field("", description="Gender of the person")
     behavior_profile_feature: Optional[str] = Field("", description="Gender of the person")
