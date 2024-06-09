@@ -42,7 +42,7 @@ def main(args):
     
     ## local path Success 파일 체크
     local_path = ''
-    1
+
     is_created = create_index(client=opensearch_client, index_name=index_name, index_body=index_body, logger=loguru_logger)
     
     # iterable Dataset
