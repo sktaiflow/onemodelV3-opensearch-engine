@@ -1,5 +1,5 @@
 from typing import List, Any, Dict, Tuple, Optional
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError, validator
 from enum import Enum
 
 class ClientSetting(BaseModel):
@@ -30,6 +30,9 @@ class RawInputSchema(BaseModel):
     is_adot: Optional[bool] = False
     create_at: str
     user_vector:List[float]
+    @validator('mno_profile_feature', 'adot_profile_feature', 'behavior_profile_feature', pre=True, always=True)
+    def set_empty_string_if_none(cls, v):
+        return v or ""
     class Config:
         extra = 'forbid'
 
