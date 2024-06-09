@@ -248,7 +248,7 @@ class OpensearchPreprocessor(BaseParquetProcessor):
         try:
             mno_profile = normalize_mno_profiels(data["mno_profile_feature"])
             adot_profile = normalize_adot_profiels(data["adot_profile_feature"])
-            behavior_profile = normalize_behavior_profiels(data["behavior_profile_feature"])
+            behavior_profile = normalize_behavior_profiels(data.get("behavior_profile_feature", ""))
             data["mno_profile_feature"] = mno_profile
             data["mno_profile_feature"] = adot_profile
             data["behavior_profile_feature"] = behavior_profile
