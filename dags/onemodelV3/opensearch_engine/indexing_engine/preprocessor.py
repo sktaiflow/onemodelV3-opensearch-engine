@@ -238,19 +238,19 @@ class OpensearchPreprocessor(BaseParquetProcessor):
     @classmethod
     def _validate_component_inputs(cls, doc_body:Dict, schema:BaseModel) -> Dict:
         try:
-            data = schema(**doc_body)
+            result = schema(**doc_body)
             code = InternalCodes.SUCCESS
             message = InternalCodes.get_message(code=code)
             failed_doc = None
 
         except ValidationError as e:
-            data = None
+            result = None
             code = InternalCodes.PYDANTIC_VALIDATION_ERROR
             message = InternalCodes.get_message(code=code, e=e)
             failed_doc = doc_body
 
         finally:
-            return {"data":data, "code":code, "message":message, "failed_doc":failed_doc}
+            return {"result":result, "code":code, "message":message, "failed_doc":failed_doc}
 
     @classmethod
     def _profile_normalize(cls, data:str):
@@ -265,12 +265,12 @@ class OpensearchPreprocessor(BaseParquetProcessor):
             code =  InternalCodes.SUCCESS
             message = "SUCCESS"
         except Exception as e:
-            data = None 
+            result = None 
             failed_doc = data
             code  = InternalCodes.PREPROCESSING_ERROR
             message = e
         finally:
-            return {"data":data, "code": code, "message": message, "failed_doc":failed_doc}
+            return {"result":result, "code": code, "message": message, "failed_doc":failed_doc}
 
     @classmethod
     def preprocess(cls, doc:Dict) -> Dict:
@@ -285,17 +285,17 @@ class OpensearchPreprocessor(BaseParquetProcessor):
         """
         validation_response = cls._validate_component_inputs(doc_body=doc, schema=RawInputSchema)
         if validation_response["code"] == InternalCodes.SUCCESS:
-            data = validation_response["data"]
+            data = validation_response["result"]
             normalize_response = cls._profile_normalize(data.dict())
             if normalize_response["code"] == InternalCodes.SUCCESS:
-                data = normalize_response["data"]
+                data = normalize_response["result"]
                 indexing_template = {
                     "_op_type": "index",
                     "_index": cls.index_name,
                     "_id": data["svc_mgmt_num"],
                     "_source": data
                 }
-                return {"data":indexing_template, "code":InternalCodes.SUCCESS.value, "message": "SUCCESS", "failed_doc":None}
+                return {"result":indexing_template, "code":InternalCodes.SUCCESS.value, "message": "SUCCESS", "failed_doc":None}
             else:
                 return normalize_response
         else:
