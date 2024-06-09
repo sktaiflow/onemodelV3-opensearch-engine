@@ -31,7 +31,7 @@ class RawInputSchema(BaseModel):
     create_at: str
     user_vector:List[float]
     
-    @field_validator('mno_profile_feature', 'adot_profile_feature', 'behavior_profile_feature', pre=True, always=True)
+    @field_validator('mno_profile_feature', 'adot_profile_feature', 'behavior_profile_feature', mode="before")
     @classmethod
     def set_empty_string_if_none(cls, v, info:ValidationInfo):
         if v is None:
